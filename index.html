@@ -144,6 +144,8 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         var player;
+        var watchedTime = 0;
+        var intervalId;
 
         function onYouTubeIframeAPIReady() {
             var videoId = getUrlParameter('video');
@@ -166,7 +168,15 @@
 
         function onPlayerStateChange(event) {
             if (event.data == YT.PlayerState.PLAYING) {
-                // Có thể xử lý sự kiện phát video ở đây nếu cần
+                intervalId = setInterval(function() {
+                    watchedTime += 1;
+                    if (watchedTime >= 60) {
+                        displaySuggestion();
+                        clearInterval(intervalId);
+                    }
+                }, 1000);
+            } else {
+                clearInterval(intervalId);
             }
         }
 
@@ -207,22 +217,4 @@
         }
 
         function unlockLinks() {
-            var linksContainer = document.getElementById('unlockLinks');
-            linksContainer.classList.add('show'); /* Hiển thị các liên kết với hiệu ứng */
-            var links = linksContainer.querySelectorAll('a');
-            links.forEach(link => {
-                link.classList.remove('disabled');
-                link.classList.add('enabled');
-                link.style.background = '#28a745'; /* Xanh lá cây khi mở khóa */
-                link.style.color = 'white'; /* Màu chữ trắng khi mở khóa */
-                link.style.cursor = 'pointer'; /* Con trỏ chuột pointer khi mở khóa */
-            });
-        }
-
-        window.onload = function() {
-            // Khởi tạo YouTube video
-            onYouTubeIframeAPIReady();
-        };
-    </script>
-</body>
-</html>
+            var linksContainer = document.getElementById('
