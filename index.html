@@ -165,7 +165,12 @@
                         'onStateChange': onPlayerStateChange
                     }
                 });
-                document.getElementById("openVideoButton").innerHTML = '<i class="fa fa-play"></i> Mở video YouTube';
+                var button = document.getElementById("openVideoButton");
+                button.innerHTML = '<i class="fa fa-play"></i> Mở video YouTube';
+                button.disabled = false; // Kích hoạt nút sau khi video ID đã được xử lý
+                button.onclick = function() {
+                    openVideo(videoId);
+                };
             } else {
                 console.error("Video ID not found in URL.");
             }
@@ -182,7 +187,7 @@
             if (event.data == YT.PlayerState.PLAYING) {
                 intervalId = setInterval(function() {
                     watchedTime += 1;
-                    if (watchedTime >= 5) {
+                    if (watchedTime >= 10) {
                         displaySuggestion();
                         clearInterval(intervalId);
                     }
@@ -218,10 +223,9 @@
             var button = document.getElementById("openVideoButton");
             button.disabled = false;
             button.classList.add("enabled");
-            button.onclick = openVideo;
         }
 
-        function openVideo() {
+        function openVideo(videoId) {
             var button = document.getElementById("openVideoButton");
             button.style.background = "#28a745";
             button.classList.remove("enabled");
