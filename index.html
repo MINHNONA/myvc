@@ -7,18 +7,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
+            font-family: 'Arial', sans-serif; /* Thay đổi phông chữ toàn bộ trang */
+            background-color: #121212; /* Màu nền tối */
+            color: #e0e0e0; /* Màu chữ sáng */
             margin: 0;
             padding: 0;
         }
         .container {
-            width: 90%;
-            max-width: 800px;
+            width: 80%;
             margin: 20px auto;
             padding: 20px;
-            background: #1e1e1e;
+            background: #1e1e1e; /* Nền tối cho container */
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
             border-radius: 10px;
         }
@@ -26,17 +25,15 @@
             text-align: center;
             margin-bottom: 20px;
         }
-        .video-container iframe {
-            width: 100%;
-            height: 315px; /* Kích thước mặc định */
-            border: none;
-            border-radius: 5px;
+        iframe {
+            border: none; /* Bỏ viền */
+            border-radius: 5px; /* Bo góc nhẹ */
         }
         h1 {
             text-align: center;
             color: #e0e0e0;
             margin-bottom: 20px;
-            font-size: 18px;
+            font-size: 18px; /* Kích thước chữ nhỏ hơn */
             background: #333;
             padding: 15px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -51,7 +48,7 @@
             align-items: center;
             justify-content: center;
             padding: 15px 30px;
-            border: 2px solid white;
+            border: 2px solid white; /* Viền trắng */
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
@@ -63,62 +60,57 @@
             background: #ff0000;
         }
         .button-container button.enabled {
-            background: #28a745;
-            transform: scale(1.05);
+            background: #28a745; /* Xanh lá cây khi mở khóa */
+            transform: scale(1.05); /* Hiệu ứng phóng to nhẹ */
         }
         .button-container button.enabled:hover {
-            background: #218838;
+            background: #218838; /* Xanh lá cây đậm khi hover */
         }
         .unlock-links {
             text-align: center;
             margin-top: 20px;
-            display: none;
+            display: none; /* Ẩn các liên kết */
             opacity: 0;
-            transition: opacity 0.5s;
+            transition: opacity 0.5s; /* Hiệu ứng chuyển tiếp */
         }
         .unlock-links.show {
             display: block;
-            opacity: 1;
+            opacity: 1; /* Hiển thị các liên kết */
         }
         .unlock-links a {
-            background: #333;
-            color: #e0e0e0;
+            background: #333; /* Nền tối cho các liên kết */
+            color: #e0e0e0; /* Màu chữ sáng */
             text-decoration: none;
             margin: 10px 0;
-            cursor: not-allowed;
-            transition: background 0.3s, color 0.3s;
+            cursor: not-allowed; /* Không cho phép nhấp */
+            transition: background 0.3s, color 0.3s; /* Hiệu ứng chuyển tiếp */
         }
         .unlock-links a.enabled {
-            background: #28a745;
+            background: #28a745; /* Xanh lá cây khi mở khóa */
             color: white;
-            cursor: pointer;
+            cursor: pointer; /* Cho phép nhấp */
         }
         .unlock-links a.enabled:hover {
-            background: #218838;
+            background: #218838; /* Xanh lá cây đậm khi hover */
         }
         .suggestion-item {
-            background: #333;
+            background: #333; /* Nền tối cho gợi ý */
             padding: 15px;
             margin: 10px 0;
             position: relative;
-            border-radius: 5px;
+            border-radius: 5px; /* Bo góc nhẹ */
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            display: none;
         }
         .copy-button {
             margin-top: 10px;
             padding: 8px 15px;
             background: #007bff;
             color: white;
-            border: 2px solid white;
+            border: 2px solid white; /* Viền trắng */
             border-radius: 5px;
-            cursor: not-allowed;
+            cursor: pointer;
             font-size: 14px;
             transition: background 0.3s;
-        }
-        .copy-button.enabled {
-            cursor: pointer;
-            background: #007bff;
         }
         .copy-button:hover {
             background: #0056b3;
@@ -131,7 +123,7 @@
 <body>
     <div class="container">
         <div class="video-container">
-            <div id="player"></div>
+            <iframe id="youtubeIframe" width="560" height="315" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
         <h1>Anh em hãy hoàn thành các bước dưới đây để mở khóa link!</h1>
         <div class="suggestions" id="suggestions"></div>
@@ -145,38 +137,6 @@
         </div>
     </div>
     <script>
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        var player;
-        var watchedTime = 0;
-        var intervalId;
-
-        function onYouTubeIframeAPIReady() {
-            var videoId = getUrlParameter('video');
-            if (videoId) {
-                player = new YT.Player('player', {
-                    height: '315',
-                    width: '100%',
-                    videoId: videoId,
-                    events: {
-                        'onStateChange': onPlayerStateChange
-                    }
-                });
-                // Update button content with video ID
-                var button = document.getElementById("openVideoButton");
-                button.innerHTML = '<i class="fa fa-play"></i> Mở video YouTube';
-                button.disabled = false;
-                button.onclick = function() {
-                    openVideo();
-                };
-            } else {
-                console.error("Video ID not found in URL.");
-            }
-        }
-
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
             var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -184,17 +144,14 @@
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING) {
-                intervalId = setInterval(function() {
-                    watchedTime += 1;
-                    if (watchedTime >= 60) {
-                        displaySuggestion();
-                        clearInterval(intervalId);
-                    }
-                }, 1000);
+        function setYoutubeVideo() {
+            var videoId = getUrlParameter('video');
+            if (videoId) {
+                document.getElementById("youtubeIframe").src = "https://www.youtube.com/embed/" + videoId;
+                var openVideoButton = document.getElementById("openVideoButton");
+                openVideoButton.setAttribute('onclick', 'window.open("https://www.youtube.com/watch?v=' + videoId + '", "_blank"); openVideo();');
             } else {
-                clearInterval(intervalId);
+                alert("Không tìm thấy video ID trong URL.");
             }
         }
 
@@ -207,14 +164,13 @@
 
         function displaySuggestion() {
             var suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
-            document.getElementById("suggestions").innerHTML = '<div class="suggestion-item">' + suggestion + '<button id="copyButton" class="copy-button" onclick="copyToClipboard(\'' + suggestion + '\')"><i class="fa fa-copy"></i> Copy</button></div>';
-            document.querySelector('.suggestion-item').style.display = 'block';
-            enableVideoButton();
+            document.getElementById("suggestions").innerHTML = '<div class="suggestion-item">' + suggestion + '<button class="copy-button" onclick="copyToClipboard(\'' + suggestion + '\')"><i class="fa fa-copy"></i> Copy</button></div>';
         }
 
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
                 alert("Đã copy vào clipboard!");
+                enableVideoButton();
             }).catch(err => {
                 console.error('Không thể copy', err);
             });
@@ -228,24 +184,29 @@
 
         function openVideo() {
             var button = document.getElementById("openVideoButton");
-            button.style.background = "#28a745";
+            button.style.background = "#28a745"; /* Xanh lá cây */
             button.classList.remove("enabled");
-            button.style.display = "none";
+            button.style.display = "none"; /* Ẩn nút sau khi ấn */
             unlockLinks();
         }
 
         function unlockLinks() {
             var linksContainer = document.getElementById('unlockLinks');
-            linksContainer.classList.add('show');
+            linksContainer.classList.add('show'); /* Hiển thị các liên kết với hiệu ứng */
             var links = linksContainer.querySelectorAll('a');
             links.forEach(link => {
                 link.classList.remove('disabled');
                 link.classList.add('enabled');
+                link.style.background = '#28a745'; /* Xanh lá cây khi mở khóa */
+                link.style.color = 'white'; /* Màu chữ trắng khi mở khóa */
+                link.style.cursor = 'pointer'; /* Con trỏ chuột pointer khi mở khóa */
             });
         }
 
+        // Hiển thị gợi ý khi tải trang
         window.onload = function() {
-            onYouTubeIframeAPIReady();
+            displaySuggestion();
+            setYoutubeVideo();
         };
     </script>
 </body>
