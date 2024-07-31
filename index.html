@@ -60,10 +60,10 @@
             color: white;
         }
         .button-container button {
-            background: #ff0000; /* Màu đỏ ban đầu */
+            background: #ff0000;
         }
         .button-container button.enabled {
-            background: #28a745; /* Màu xanh khi sao chép gợi ý */
+            background: #28a745;
             transform: scale(1.05);
         }
         .button-container button.enabled:hover {
@@ -123,9 +123,6 @@
         .copy-button:hover {
             background: #0056b3;
         }
-        .button-container button .fa, .unlock-links a .fa {
-            margin-right: 8px;
-        }
     </style>
 </head>
 <body>
@@ -136,7 +133,7 @@
         <h1>Anh em hãy hoàn thành các bước dưới đây để mở khóa link!</h1>
         <div class="suggestions" id="suggestions"></div>
         <div class="button-container">
-            <button id="openVideoButton" disabled><i class="fa fa-play"></i> Mở video YouTube</button>
+            <button id="openVideoButton" class="disabled" disabled><i class="fa fa-play"></i> Mở video YouTube</button>
         </div>
         <div class="unlock-links" id="unlockLinks">
             <a id="unlockLink1" href="YOUR_UNLOCK_LINK_1" target="_blank" class="disabled"><i class="fa fa-link"></i> Mở khóa liên kết 1</a>
@@ -156,18 +153,14 @@
 
         function onYouTubeIframeAPIReady() {
             var videoId = getUrlParameter('video');
-            if (videoId) {
-                player = new YT.Player('player', {
-                    height: '315',
-                    width: '100%',
-                    videoId: videoId,
-                    events: {
-                        'onStateChange': onPlayerStateChange
-                    }
-                });
-            } else {
-                console.error("Video ID not found in URL.");
-            }
+            player = new YT.Player('player', {
+                height: '315',
+                width: '560',
+                videoId: videoId,
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
         }
 
         function getUrlParameter(name) {
@@ -200,9 +193,9 @@
 
         function displaySuggestion() {
             var suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
-            document.getElementById("suggestions").innerHTML = '<div class="suggestion-item">' + suggestion + '<button id="copyButton" class="copy-button" onclick="copyToClipboard(\'' + suggestion + '\')"><i class="fa fa-copy"></i> Copy</button></div>';
+            document.getElementById("suggestions").innerHTML = '<div class="suggestion-item">' + suggestion + '<button id="copyButton" class="copy-button" onclick="copyToClipboard(\'' + suggestion + '\')"><i class="fa fa-copy"></i> Sao chép</button></div>';
             document.querySelector('.suggestion-item').style.display = 'block';
-            enableVideoButton();
+            document.getElementById("openVideoButton").classList.remove("disabled");
         }
 
         function copyToClipboard(text) {
@@ -218,32 +211,35 @@
             var button = document.getElementById("openVideoButton");
             button.disabled = false;
             button.classList.add("enabled");
-            button.style.background = "#28a745"; // Màu xanh sau khi sao chép gợi ý
+            button.onclick = openVideo;
         }
 
         function openVideo() {
             var button = document.getElementById("openVideoButton");
+            button.style.background = "#28a745"; // Xanh lá cây
+            button.classList.remove("enabled");
+            button.style.display = "none"; // Ẩn nút sau khi ấn
+
             var videoId = getUrlParameter('video');
             if (videoId) {
-                button.style.display = "none"; // Ẩn nút sau khi ấn
-                player.loadVideoById(videoId); // Mở video theo ID
-                unlockLinks(); // Hiển thị liên kết
-            } else {
-                console.error("Video ID not found in URL.");
+                var videoUrl = "https://www.youtube.com/watch?v=" + videoId;
+                window.open(videoUrl, '_blank');
             }
+            unlockLinks();
         }
 
         function unlockLinks() {
             var linksContainer = document.getElementById('unlockLinks');
-            linksContainer.classList.add('show'); // Hiển thị các liên kết
+            linksContainer.classList.add('show');
             var links = linksContainer.querySelectorAll('a');
             links.forEach(link => {
                 link.classList.remove('disabled');
                 link.classList.add('enabled');
+                link.style.background = '#28a745'; // Xanh lá cây khi mở khóa
+                link.style.color = 'white'; // Màu chữ trắng khi mở khóa
+                link.style.cursor = 'pointer'; // Con trỏ chuột pointer khi mở khóa
             });
         }
-
-        document.getElementById('openVideoButton').onclick = openVideo;
 
         window.onload = function() {
             onYouTubeIframeAPIReady();
