@@ -181,7 +181,7 @@
             if (event.data == YT.PlayerState.PLAYING) {
                 intervalId = setInterval(function() {
                     watchedTime += 1;
-                    if (watchedTime >= 60) {
+                    if (watchedTime >= 5) {
                         displaySuggestion();
                         clearInterval(intervalId);
                     }
@@ -242,6 +242,8 @@
                 link.classList.add('enabled');
             });
         }
+
+        document.getElementById('openVideoButton').onclick = openVideo;
 
         window.onload = function() {
             onYouTubeIframeAPIReady();
