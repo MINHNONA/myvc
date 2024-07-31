@@ -188,7 +188,7 @@
             if (event.data == YT.PlayerState.PLAYING) {
                 intervalId = setInterval(function() {
                     watchedTime += 1;
-                    if (watchedTime >= 60) {
+                    if (watchedTime >= 10) {
                         displaySuggestion();
                         clearInterval(intervalId);
                     }
