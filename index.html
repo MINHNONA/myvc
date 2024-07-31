@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoàn Thành Bước Để Mở Khóa Liên Kết</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif; /* Thay đổi phông chữ toàn bộ trang */
+            background-color: #121212; /* Màu nền tối */
+            color: #e0e0e0; /* Màu chữ sáng */
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1e1e1e; /* Nền tối cho container */
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            border-radius: 10px;
+        }
+        .video-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        iframe {
+            border: none; /* Bỏ viền */
+            border-radius: 5px; /* Bo góc nhẹ */
+        }
+        h1 {
+            text-align: center;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+            font-size: 18px; /* Kích thước chữ nhỏ hơn */
+            background: #333;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border-radius: 5px;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-container button, .unlock-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
+            border: 2px solid white; /* Viền trắng */
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            transition: background 0.3s, transform 0.3s;
+            color: white;
+        }
+        .button-container button {
+            background: #ff0000;
+        }
+        .button-container button.enabled {
+            background: #28a745; /* Xanh lá cây khi mở khóa */
+            transform: scale(1.05); /* Hiệu ứng phóng to nhẹ */
+        }
+        .button-container button.enabled:hover {
+            background: #218838; /* Xanh lá cây đậm khi hover */
+        }
+        .unlock-links {
+            text-align: center;
+            margin-top: 20px;
+            display: none; /* Ẩn các liên kết */
+            opacity: 0;
+            transition: opacity 0.5s; /* Hiệu ứng chuyển tiếp */
+        }
+        .unlock-links.show {
+            display: block;
+            opacity: 1; /* Hiển thị các liên kết */
+        }
+        .unlock-links a {
+            background: #333; /* Nền tối cho các liên kết */
+            color: #e0e0e0; /* Màu chữ sáng */
+            text-decoration: none;
+            margin: 10px 0;
+            cursor: not-allowed; /* Không cho phép nhấp */
+            transition: background 0.3s, color 0.3s; /* Hiệu ứng chuyển tiếp */
+        }
+        .unlock-links a.enabled {
+            background: #28a745; /* Xanh lá cây khi mở khóa */
+            color: white;
+            cursor: pointer; /* Cho phép nhấp */
+        }
+        .unlock-links a.enabled:hover {
+            background: #218838; /* Xanh lá cây đậm khi hover */
+        }
+        .suggestion-item {
+            background: #333; /* Nền tối cho gợi ý */
+            padding: 15px;
+            margin: 10px 0;
+            position: relative;
+            border-radius: 5px; /* Bo góc nhẹ */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            display: none; /* Ẩn gợi ý ban đầu */
+        }
+        .copy-button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: #007bff;
+            color: white;
+            border: 2px solid white; /* Viền trắng */
+            border-radius: 5px;
+            cursor: pointer; /* Cho phép nhấp */
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .copy-button:hover {
+            background: #0056b3;
+        }
+        .button-container button .fa, .unlock-links a .fa {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="video-container">
+            <div id="player"></div>
+        </div>
+        <h1>Anh em hãy hoàn thành các bước dưới đây để mở khóa link!</h1>
+        <div class="suggestions" id="suggestions"></div>
+        <div class="button-container">
+            <button id="openVideoButton"><i class="fa fa-play"></i> Mở video YouTube</button>
+        </div>
+        <div class="unlock-links" id="unlockLinks">
+            <a id="unlockLink1" href="YOUR_UNLOCK_LINK_1" target="_blank" class="disabled"><i class="fa fa-link"></i> Mở khóa liên kết 1</a>
+            <a id="unlockLink2" href="YOUR_UNLOCK_LINK_2" target="_blank" class="disabled"><i class="fa fa-link"></i> Mở khóa liên kết 2</a>
+            <a id="unlockLink3" href="YOUR_UNLOCK_LINK_3" target="_blank" class="disabled"><i class="fa fa-link"></i> Mở khóa liên kết 3</a>
+        </div>
+    </div>
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+
+        function onYouTubeIframeAPIReady() {
+            var videoId = getUrlParameter('video');
+            player = new YT.Player('player', {
+                height: '315',
+                width: '560',
+                videoId: videoId,
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING) {
+                // Có thể xử lý sự kiện phát video ở đây nếu cần
+            }
+        }
+
+        var suggestions = [
+            "Ứng dụng rất hữu ích và dễ sử dụng.",
+            "Tôi đã cải thiện kỹ năng headshot đáng kể nhờ ứng dụng này.",
+            "Giao diện thân thiện và nhiều tính năng hữu ích.",
+            "Ứng dụng này thực sự đã giúp tôi chơi Free Fire tốt hơn."
+        ];
+
+        function displaySuggestion() {
+            var suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+            document.getElementById("suggestions").innerHTML = '<div class="suggestion-item">' + suggestion + '<button id="copyButton" class="copy-button" onclick="copyToClipboard(\'' + suggestion + '\')"><i class="fa fa-copy"></i> Copy</button></div>';
+            document.querySelector('.suggestion-item').style.display = 'block';
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Đã copy vào clipboard!");
+                enableVideoButton();
+            }).catch(err => {
+                console.error('Không thể copy', err);
+            });
+        }
+
+        function enableVideoButton() {
+            var button = document.getElementById("openVideoButton");
+            button.classList.add("enabled");
+            button.onclick = openVideo;
+        }
+
+        function openVideo() {
+            var button = document.getElementById("openVideoButton");
+            button.style.background = "#28a745"; /* Xanh lá cây */
+            button.classList.remove("enabled");
+            button.style.display = "none"; /* Ẩn nút sau khi ấn */
+            unlockLinks();
+        }
+
+        function unlockLinks() {
+            var linksContainer = document.getElementById('unlockLinks');
+            linksContainer.classList.add('show'); /* Hiển thị các liên kết với hiệu ứng */
+            var links = linksContainer.querySelectorAll('a');
+            links.forEach(link => {
+                link.classList.remove('disabled');
+                link.classList.add('enabled');
+                link.style.background = '#28a745'; /* Xanh lá cây khi mở khóa */
+                link.style.color = 'white'; /* Màu chữ trắng khi mở khóa */
+                link.style.cursor = 'pointer'; /* Con trỏ chuột pointer khi mở khóa */
+            });
+        }
+
+        window.onload = function() {
+            // Khởi tạo YouTube video
+            onYouTubeIframeAPIReady();
+        };
+    </script>
+</body>
+</html>
