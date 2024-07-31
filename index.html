@@ -165,11 +165,12 @@
                         'onStateChange': onPlayerStateChange
                     }
                 });
+                // Update button content with video ID
                 var button = document.getElementById("openVideoButton");
                 button.innerHTML = '<i class="fa fa-play"></i> Mở video YouTube';
-                button.disabled = false; // Kích hoạt nút sau khi video ID đã được xử lý
+                button.disabled = false;
                 button.onclick = function() {
-                    openVideo(videoId);
+                    openVideo();
                 };
             } else {
                 console.error("Video ID not found in URL.");
@@ -187,7 +188,7 @@
             if (event.data == YT.PlayerState.PLAYING) {
                 intervalId = setInterval(function() {
                     watchedTime += 1;
-                    if (watchedTime >= 10) {
+                    if (watchedTime >= 60) {
                         displaySuggestion();
                         clearInterval(intervalId);
                     }
@@ -208,12 +209,12 @@
             var suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
             document.getElementById("suggestions").innerHTML = '<div class="suggestion-item">' + suggestion + '<button id="copyButton" class="copy-button" onclick="copyToClipboard(\'' + suggestion + '\')"><i class="fa fa-copy"></i> Copy</button></div>';
             document.querySelector('.suggestion-item').style.display = 'block';
+            enableVideoButton();
         }
 
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
                 alert("Đã copy vào clipboard!");
-                enableVideoButton();
             }).catch(err => {
                 console.error('Không thể copy', err);
             });
@@ -225,7 +226,7 @@
             button.classList.add("enabled");
         }
 
-        function openVideo(videoId) {
+        function openVideo() {
             var button = document.getElementById("openVideoButton");
             button.style.background = "#28a745";
             button.classList.remove("enabled");
