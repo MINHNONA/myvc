@@ -181,7 +181,7 @@
             if (event.data == YT.PlayerState.PLAYING) {
                 intervalId = setInterval(function() {
                     watchedTime += 1;
-                    if (watchedTime >= 5) {
+                    if (watchedTime >= 60) {
                         displaySuggestion();
                         clearInterval(intervalId);
                     }
@@ -227,7 +227,7 @@
             if (videoId) {
                 button.style.display = "none"; // Ẩn nút sau khi ấn
                 player.loadVideoById(videoId); // Mở video theo ID
-                unlockLinks();
+                unlockLinks(); // Hiển thị liên kết
             } else {
                 console.error("Video ID not found in URL.");
             }
@@ -235,7 +235,7 @@
 
         function unlockLinks() {
             var linksContainer = document.getElementById('unlockLinks');
-            linksContainer.classList.add('show');
+            linksContainer.classList.add('show'); // Hiển thị các liên kết
             var links = linksContainer.querySelectorAll('a');
             links.forEach(link => {
                 link.classList.remove('disabled');
