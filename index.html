@@ -100,6 +100,7 @@
             position: relative;
             border-radius: 5px; /* Bo góc nhẹ */
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            display: none; /* Ẩn gợi ý ban đầu */
         }
         .copy-button {
             margin-top: 10px;
@@ -108,9 +109,13 @@
             color: white;
             border: 2px solid white; /* Viền trắng */
             border-radius: 5px;
-            cursor: pointer;
+            cursor: not-allowed; /* Không cho phép nhấp */
             font-size: 14px;
             transition: background 0.3s;
+        }
+        .copy-button.enabled {
+            cursor: pointer; /* Cho phép nhấp */
+            background: #007bff;
         }
         .copy-button:hover {
             background: #0056b3;
@@ -123,7 +128,7 @@
 <body>
     <div class="container">
         <div class="video-container">
-            <iframe id="youtubeIframe" width="560" height="315" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <div id="player"></div>
         </div>
         <h1>Anh em hãy hoàn thành các bước dưới đây để mở khóa link!</h1>
         <div class="suggestions" id="suggestions"></div>
@@ -137,6 +142,27 @@
         </div>
     </div>
     <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        var watchedTime = 0;
+        var intervalId;
+
+        function onYouTubeIframeAPIReady() {
+            var videoId = getUrlParameter('video');
+            player = new YT.Player('player', {
+                height: '315',
+                width: '560',
+                videoId: videoId,
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
             var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -144,14 +170,17 @@
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
-        function setYoutubeVideo() {
-            var videoId = getUrlParameter('video');
-            if (videoId) {
-                document.getElementById("youtubeIframe").src = "https://www.youtube.com/embed/" + videoId;
-                var openVideoButton = document.getElementById("openVideoButton");
-                openVideoButton.setAttribute('onclick', 'window.open("https://www.youtube.com/watch?v=' + videoId + '", "_blank"); openVideo();');
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING) {
+                intervalId = setInterval(function() {
+                    watchedTime += 1;
+                    if (watchedTime >= 60) {
+                        displaySuggestion();
+                        clearInterval(intervalId);
+                    }
+                }, 1000);
             } else {
-                alert("Không tìm thấy video ID trong URL.");
+                clearInterval(intervalId);
             }
         }
 
@@ -164,7 +193,8 @@
 
         function displaySuggestion() {
             var suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
-            document.getElementById("suggestions").innerHTML = '<div class="suggestion-item">' + suggestion + '<button class="copy-button" onclick="copyToClipboard(\'' + suggestion + '\')"><i class="fa fa-copy"></i> Copy</button></div>';
+            document.getElementById("suggestions").innerHTML = '<div class="suggestion-item">' + suggestion + '<button id="copyButton" class="copy-button" onclick="copyToClipboard(\'' + suggestion + '\')"><i class="fa fa-copy"></i> Copy</button></div>';
+            document.querySelector('.suggestion-item').style.display = 'block';
         }
 
         function copyToClipboard(text) {
@@ -180,6 +210,7 @@
             var button = document.getElementById("openVideoButton");
             button.disabled = false;
             button.classList.add("enabled");
+            button.onclick = openVideo;
         }
 
         function openVideo() {
@@ -203,10 +234,9 @@
             });
         }
 
-        // Hiển thị gợi ý khi tải trang
         window.onload = function() {
-            displaySuggestion();
-            setYoutubeVideo();
+            // Khởi tạo YouTube video
+            onYouTubeIframeAPIReady();
         };
     </script>
 </body>
