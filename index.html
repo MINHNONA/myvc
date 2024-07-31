@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            font-family: 'Arial', sans-serif; /* Thay đổi phông chữ toàn bộ trang */
-            background-color: #121212; /* Màu nền tối */
-            color: #e0e0e0; /* Màu chữ sáng */
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
             margin: 0;
             padding: 0;
         }
@@ -17,7 +17,7 @@
             width: 80%;
             margin: 20px auto;
             padding: 20px;
-            background: #1e1e1e; /* Nền tối cho container */
+            background: #1e1e1e;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
             border-radius: 10px;
         }
@@ -26,14 +26,14 @@
             margin-bottom: 20px;
         }
         iframe {
-            border: none; /* Bỏ viền */
-            border-radius: 5px; /* Bo góc nhẹ */
+            border: none;
+            border-radius: 5px;
         }
         h1 {
             text-align: center;
             color: #e0e0e0;
             margin-bottom: 20px;
-            font-size: 18px; /* Kích thước chữ nhỏ hơn */
+            font-size: 18px;
             background: #333;
             padding: 15px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -48,7 +48,7 @@
             align-items: center;
             justify-content: center;
             padding: 15px 30px;
-            border: 2px solid white; /* Viền trắng */
+            border: 2px solid white;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
@@ -60,58 +60,62 @@
             background: #ff0000;
         }
         .button-container button.enabled {
-            background: #28a745; /* Xanh lá cây khi mở khóa */
-            transform: scale(1.05); /* Hiệu ứng phóng to nhẹ */
+            background: #28a745;
+            transform: scale(1.05);
         }
         .button-container button.enabled:hover {
-            background: #218838; /* Xanh lá cây đậm khi hover */
+            background: #218838;
         }
         .unlock-links {
             text-align: center;
             margin-top: 20px;
-            display: none; /* Ẩn các liên kết */
+            display: none;
             opacity: 0;
-            transition: opacity 0.5s; /* Hiệu ứng chuyển tiếp */
+            transition: opacity 0.5s;
         }
         .unlock-links.show {
             display: block;
-            opacity: 1; /* Hiển thị các liên kết */
+            opacity: 1;
         }
         .unlock-links a {
-            background: #333; /* Nền tối cho các liên kết */
-            color: #e0e0e0; /* Màu chữ sáng */
+            background: #333;
+            color: #e0e0e0;
             text-decoration: none;
             margin: 10px 0;
-            cursor: not-allowed; /* Không cho phép nhấp */
-            transition: background 0.3s, color 0.3s; /* Hiệu ứng chuyển tiếp */
+            cursor: not-allowed;
+            transition: background 0.3s, color 0.3s;
         }
         .unlock-links a.enabled {
-            background: #28a745; /* Xanh lá cây khi mở khóa */
+            background: #28a745;
             color: white;
-            cursor: pointer; /* Cho phép nhấp */
+            cursor: pointer;
         }
         .unlock-links a.enabled:hover {
-            background: #218838; /* Xanh lá cây đậm khi hover */
+            background: #218838;
         }
         .suggestion-item {
-            background: #333; /* Nền tối cho gợi ý */
+            background: #333;
             padding: 15px;
             margin: 10px 0;
             position: relative;
-            border-radius: 5px; /* Bo góc nhẹ */
+            border-radius: 5px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            display: none; /* Ẩn gợi ý ban đầu */
+            display: none;
         }
         .copy-button {
             margin-top: 10px;
             padding: 8px 15px;
             background: #007bff;
             color: white;
-            border: 2px solid white; /* Viền trắng */
+            border: 2px solid white;
             border-radius: 5px;
-            cursor: pointer; /* Cho phép nhấp */
+            cursor: not-allowed;
             font-size: 14px;
             transition: background 0.3s;
+        }
+        .copy-button.enabled {
+            cursor: pointer;
+            background: #007bff;
         }
         .copy-button:hover {
             background: #0056b3;
@@ -129,7 +133,7 @@
         <h1>Anh em hãy hoàn thành các bước dưới đây để mở khóa link!</h1>
         <div class="suggestions" id="suggestions"></div>
         <div class="button-container">
-            <button id="openVideoButton"><i class="fa fa-play"></i> Mở video YouTube</button>
+            <button id="openVideoButton" disabled><i class="fa fa-play"></i> Mở video YouTube</button>
         </div>
         <div class="unlock-links" id="unlockLinks">
             <a id="unlockLink1" href="YOUR_UNLOCK_LINK_1" target="_blank" class="disabled"><i class="fa fa-link"></i> Mở khóa liên kết 1</a>
@@ -204,17 +208,35 @@
 
         function enableVideoButton() {
             var button = document.getElementById("openVideoButton");
+            button.disabled = false;
             button.classList.add("enabled");
             button.onclick = openVideo;
         }
 
         function openVideo() {
             var button = document.getElementById("openVideoButton");
-            button.style.background = "#28a745"; /* Xanh lá cây */
+            button.style.background = "#28a745";
             button.classList.remove("enabled");
-            button.style.display = "none"; /* Ẩn nút sau khi ấn */
+            button.style.display = "none";
             unlockLinks();
         }
 
         function unlockLinks() {
-            var linksContainer = document.getElementById('
+            var linksContainer = document.getElementById('unlockLinks');
+            linksContainer.classList.add('show');
+            var links = linksContainer.querySelectorAll('a');
+            links.forEach(link => {
+                link.classList.remove('disabled');
+                link.classList.add('enabled');
+                link.style.background = '#28a745';
+                link.style.color = 'white';
+                link.style.cursor = 'pointer';
+            });
+        }
+
+        window.onload = function() {
+            onYouTubeIframeAPIReady();
+        };
+    </script>
+</body>
+</html>
