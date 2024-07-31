@@ -153,14 +153,19 @@
 
         function onYouTubeIframeAPIReady() {
             var videoId = getUrlParameter('video');
-            player = new YT.Player('player', {
-                height: '315',
-                width: '560',
-                videoId: videoId,
-                events: {
-                    'onStateChange': onPlayerStateChange
-                }
-            });
+            if (videoId) {
+                player = new YT.Player('player', {
+                    height: '315',
+                    width: '560',
+                    videoId: videoId,
+                    events: {
+                        'onStateChange': onPlayerStateChange
+                    }
+                });
+                document.getElementById("openVideoButton").disabled = false;
+            } else {
+                console.error("Video ID not found in URL.");
+            }
         }
 
         function getUrlParameter(name) {
